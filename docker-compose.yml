@@ -9,12 +9,10 @@ services:
   db:
     image: postgres:15
     container_name: pg-db
-    env_file:
-      - ./backend/.env
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: dreamvacations
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Biggie@44
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -23,10 +21,16 @@ services:
       - dream-network
 
   backend:
-    image: wilfred2018/dream-backend:kc-v1
+    image: kelomi44/dream-backend:latest
     container_name: backend
-    env_file:
-      - ./backend/.env
+    environment:
+      DB_NAME: dreamvacations
+      DB_USER: postgres
+      DB_PASSWORD: Biggie@44
+      DB_HOST: db
+      DB_PORT: 5432
+      PORT: 3001
+      COUNTRIES_API_BASE_URL: https://restcountries.com/v3.1
     depends_on:
       - db
     ports:
@@ -35,13 +39,13 @@ services:
       - dream-network
 
   frontend:
-    image: wilfred2018/dream-frontend:kc-v1
+    image: kelomi44/dream-frontend:latest
     container_name: frontend
-    env_file:
-      - ./frontend/.env
+    environment:
+      - REACT_APP_API_URL=http://backend:3001
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "3000:80"
     networks:
       - dream-network
